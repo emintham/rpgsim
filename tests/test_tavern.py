@@ -2,56 +2,56 @@ from unittest import TestCase
 
 from pykka.registry import ActorRegistry
 
-from rpgsim.person import Person
+from rpgsim.entity import Entity
 from rpgsim.tavern import Tavern
 
 
 class TavernTests(TestCase):
     def setUp(self):
         self.tavern = Tavern()
-        self.person = Person()
+        self.entity = Entity()
 
     def tearDown(self):
         ActorRegistry.stop_all()
 
     def test_admit(self):
-        other = Person()
+        other = Entity()
 
-        self.tavern.admit(self.person)
+        self.tavern.admit(self.entity)
 
-        self.assertTrue(self.person in self.tavern)
+        self.assertTrue(self.entity in self.tavern)
         self.assertTrue(other not in self.tavern)
 
     def test_admit_multiple(self):
-        persons = [Person() for _ in range(5)]
-        self.tavern.admit(persons)
-        self.assertEqual(self.tavern.guests, set(persons))
+        entities = [Entity() for _ in range(5)]
+        self.tavern.admit(entities)
+        self.assertEqual(self.tavern.guests, set(entities))
 
     def test_boot(self):
-        self.tavern.admit(self.person)
-        self.assertTrue(self.person in self.tavern)
+        self.tavern.admit(self.entity)
+        self.assertTrue(self.entity in self.tavern)
 
-        self.tavern.boot(self.person)
-        self.assertTrue(self.person not in self.tavern)
+        self.tavern.boot(self.entity)
+        self.assertTrue(self.entity not in self.tavern)
 
     def test_boot_multiple(self):
-        persons = [Person() for _ in range(5)]
-        self.tavern.admit(persons)
+        entities = [Entity() for _ in range(5)]
+        self.tavern.admit(entities)
 
-        self.tavern.boot(persons[:3])
+        self.tavern.boot(entities[:3])
 
-        self.assertEqual(self.tavern.guests, set(persons[3:]))
+        self.assertEqual(self.tavern.guests, set(entities[3:]))
 
     def test_boot_non_guest_raises_error(self):
         with self.assertRaises(Exception):
-            self.tavern.boot(self.person)
+            self.tavern.boot(self.entity)
 
     def test_tavern_is_borg(self):
         t2 = Tavern()
-        self.tavern.admit(self.person)
-        self.assertTrue(self.person in t2)
+        self.tavern.admit(self.entity)
+        self.assertTrue(self.entity in t2)
 
     def test_tavern_guests(self):
-        persons = [Person() for _ in range(5)]
-        self.tavern.admit(persons)
-        self.assertEqual(self.tavern.guests, set(persons))
+        entities = [Entity() for _ in range(5)]
+        self.tavern.admit(entities)
+        self.assertEqual(self.tavern.guests, set(entities))

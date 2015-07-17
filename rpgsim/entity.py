@@ -4,12 +4,12 @@ from rpgsim.stats import Stats
 from config import DEFAULT_NAME
 
 
-class PersonActor(ThreadingActor):
+class EntityActor(ThreadingActor):
     def on_receive(self, message):
         pass
 
 
-class Person(object):
+class Entity(object):
     def __init__(self, name=DEFAULT_NAME, stats=None, default=False):
         if stats is not None and not isinstance(stats, Stats):
             error_msg = 'Expecting stats to be of type {}, got {} instead.'
@@ -17,7 +17,7 @@ class Person(object):
                                              stats.__class__.__name__))
 
         self.name = name
-        self.actor = PersonActor().start()
+        self.actor = EntityActor().start()
         self.stats = stats or Stats()
         if not default and stats is None:
             self.stats.randomize()
