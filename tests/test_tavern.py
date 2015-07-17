@@ -1,5 +1,7 @@
 from unittest import TestCase
 
+from pykka.registry import ActorRegistry
+
 from rpgsim.person import Person
 from rpgsim.tavern import Tavern
 
@@ -10,7 +12,7 @@ class TavernTests(TestCase):
         self.person = Person()
 
     def tearDown(self):
-        del self.person
+        ActorRegistry.stop_all()
 
     def test_admit(self):
         other = Person()
