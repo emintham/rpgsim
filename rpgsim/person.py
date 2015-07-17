@@ -1,5 +1,12 @@
+from pykka import ThreadingActor
+
 from rpgsim.stats import Stats
 from config import DEFAULT_NAME
+
+
+class PersonActor(ThreadingActor):
+    def on_receive(self, message):
+        pass
 
 
 class Person(object):
@@ -10,9 +17,13 @@ class Person(object):
                                              stats.__class__.__name__))
 
         self.name = name
+        self.actor = PersonActor().start()
         self.stats = stats or Stats()
         if not default and stats is None:
             self.stats.randomize()
+
+    def __del__(self):
+        self.actor.stop()
 
     def __str__(self):
         return self.name

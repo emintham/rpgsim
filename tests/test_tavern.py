@@ -9,6 +9,9 @@ class TavernTests(TestCase):
         self.tavern = Tavern()
         self.person = Person()
 
+    def tearDown(self):
+        del self.person
+
     def test_admit(self):
         other = Person()
 
