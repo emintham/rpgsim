@@ -1,2 +1,5 @@
 pykka
 brownie
+
+# For testing
+nose
