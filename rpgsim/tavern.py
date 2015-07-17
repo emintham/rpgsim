@@ -17,6 +17,17 @@ class Tavern(Borg):
 
         return person in self._guests
 
+    def __len__(self):
+        return len(self.guests)
+
+    def __repr__(self):
+        prefix = '<{}({}): '.format(self.__class__.__name__, str(len(self)))
+        suffix = '>'
+        return prefix + self.fmt_guests() + suffix
+
+    def fmt_guests(self):
+        return ', '.join([str(guest) for guest in self.guests])
+
     def admit(self, person):
         """Puts a person or persons into tavern."""
         if not isinstance(person, Person) and not hasattr(person, '__iter__'):
