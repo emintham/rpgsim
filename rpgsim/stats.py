@@ -1,6 +1,6 @@
 import random
 
-from config import DEFAULT_STATS, MAX_STAT
+from config import DEFAULT_STATS, MAX_STAT, ATTACK_STATS
 
 
 class Stats(object):
@@ -20,6 +20,9 @@ class Stats(object):
 
     def __getitem__(self, stat):
         return self._stats[stat]
+
+    def __setitem__(self, stat, value):
+        self._stats[stat] = value
 
     def __iter__(self):
         return iter(self._stats)
@@ -44,6 +47,10 @@ class Stats(object):
     @property
     def initial_stats(self):
         return self._initial
+
+    @property
+    def attack_stats(self):
+        return {stat: self[stat] for stat in ATTACK_STATS}
 
     def randomize(self, n=MAX_STAT):
         self.max_stat = n

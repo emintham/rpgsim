@@ -1,8 +1,28 @@
 from unittest import TestCase
 
+from pykka import ActorRegistry
+
 from rpgsim.stats import Stats
-from rpgsim.entity import Entity
+from rpgsim.entity import Entity, Character
 from config import DEFAULT_STATS, MAX_STAT, DEFAULT_NAME
+
+
+class MockEntity(Entity):
+    def __init__(self):
+        super(MockEntity, self).__init__()
+        self.messages = []
+
+    @property
+    def handlers(self):
+        return {
+            'message': self.message_handler
+        }
+
+    def message_handler(self, message, wait):
+        secret = message.get('secret')
+        self.messages.append(secret)
+        if wait:
+            return self.messages
 
 
 class StatsTests(TestCase):
@@ -29,6 +49,9 @@ class StatsTests(TestCase):
 
 
 class EntityTests(TestCase):
+    def tearDown(self):
+        ActorRegistry.stop_all()
+
     def test_default_name(self):
         entity = Entity()
         self.assertEqual(entity.name, DEFAULT_NAME)
@@ -55,3 +78,21 @@ class EntityTests(TestCase):
 
         self.assertEqual(entity.stats['strength'], 1)
         self.assertEqual(entity.stats['hp'], 200)
+
+    def test_entity_can_tell(self):
+        entity = MockEntity()
+        entity.tell({'action': 'message', 'secret': '123'})
+        entity.tell({'action': 'message', 'secret': 'recipe'})
+        self.assertEqual(set(['123', 'recipe']), entity.messages)
+
+
+class CharacterTests(TestCase):
+    def tearDown(self):
+        ActorRegistry.stop_all()
+
+    def test_attack_is_registered(self):
+        c1 = Character()
+        c2 = Character()
+        response = c1.attack(c2, wait=True)
+        print response
+        self.fail()

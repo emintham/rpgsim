@@ -9,6 +9,14 @@ class Trait(object):
 
     __metaclass__ = AbstractClassMeta
 
+    @property
+    def trait_name(self):
+        return ''
+
+    @property
+    def traits(self):
+        return []
+
     def __getattr__(self, attr):
         """
         Hijack getattr so that any predicate method beginning with
@@ -17,7 +25,11 @@ class Trait(object):
         Returns False on such predicates.
         """
         if attr.startswith('__'):
-            raise AttributeError(attr)
+            # __getattr__ is only called if __getattribute__ fails
+            # if a __method__ gets to this point, it is most likely
+            # not defined.
+            raise AttributeError(
+                '{} not defined on {}'.format(attr, self.__class__.__name__))
 
         try:
             return super(Trait, self).__getattr__(attr)
@@ -28,13 +40,25 @@ class Trait(object):
                 raise
 
 
-class Observable(Trait):
+class BaseTrait(Trait):
+    __metaclass__ = AbstractClassMeta
+
+    @property
+    def trait_name(self):
+        return self.__class__.__name__.lower()
+
+    @property
+    def traits(self):
+        return [self.trait_name] + super(BaseTrait, self).traits
+
+
+class Observable(BaseTrait):
     """This entity is observable."""
 
     is_observable = True
 
 
-class Mortal(Trait):
+class Mortal(BaseTrait):
     """This entity can be damaged."""
 
     __metaclass__ = AbstractClassMeta
